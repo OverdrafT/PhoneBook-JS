@@ -1,0 +1,91 @@
+body { 
+    background-color: #f8f9fc; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main { 
+    flex: 1 0 auto; 
+    padding-top: 20px;
+    padding-bottom: 80px; 
+}
+
+footer.fixed-bottom {
+    background-color: white;
+    border-top: 1px solid #e3e6f0;
+    padding: 15px 0;
+    z-index: 1030;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.95) translateX(10px);
+    transition: all 0.4s ease;
+}
+
+tr {
+    transition: all 0.3s ease;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+.navbar { background-color: #4e73df !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.card { border: none; border-radius: 12px; box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15); overflow: hidden; }
+.table-responsive { overflow: hidden; }
+
+.avatar-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+@media (min-width: 577px) {
+    .contact-table { table-layout: fixed; width: 100%; }
+    .contact-table th:nth-child(1), .contact-table td:nth-child(1) { width: 70px; }
+    .contact-table th:nth-child(2), .contact-table td:nth-child(2) { width: 25%; }
+}
+
+@media (max-width: 576px) {
+    .contact-table, .contact-table tbody, .contact-table tr, .contact-table td {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    .contact-table thead { display: none !important; }
+
+    .contact-table tr:not(.table-secondary) {
+        margin-bottom: 20px;
+        border: 1px solid #e3e6f0 !important;
+        border-radius: 15px;
+        background: white !important;
+        padding: 15px;
+    }
+
+    .contact-table td { border: none !important; padding: 5px 0 !important; text-align: center !important; }
+
+    .contact-table td:nth-child(1) {
+        display: flex !important;
+        justify-content: center !important;
+        background: transparent !important;
+    }
+
+    .avatar-circle {
+        margin-bottom: 10px;
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    .contact-table .btn {
+        display: block !important;
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+}
