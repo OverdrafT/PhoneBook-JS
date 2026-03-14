@@ -66,4 +66,8 @@ The application follows a logical user journey:
    Simply open index.html via Live Server in VS Code or any modern browser.
 
 3. **Live Demo:**
-   Alternatively, visit the live demo via [GitHub Pages](https://overdraft.github.io/PhoneBook/index.html).
+   Alternatively, visit the live demo via [GitHub Pages](https://overdraft.github.io/PhoneBook-JS/index.html).
+
+   ---
+
+   Report: [Google Docs](https://docs.google.com/document/d/1hclSB-8W1cqrtn-H-WY6Rx7wAtG-2Zy-/edit?usp=sharing&ouid=113956265273490753946&rtpof=true&sd=true)
