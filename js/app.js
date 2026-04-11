@@ -2,58 +2,67 @@ import ContactModel from './model.js';
 import ContactView from './view.js';
 import ContactController from './controller.js';
 
-const contactApp = document.getElementById('contact-list') 
-    ? new ContactController(new ContactModel(), new ContactView()) 
-    : null;
+const contactList = document.getElementById('contact-list');
+if (contactList) {
+    console.log("PhoneBook: Initializing...");
+    const model = new ContactModel();
+    const view = new ContactView();
+    new ContactController(model, view);
+}
 
 const profileInit = () => {
     const nameEl = document.getElementById('profile-name');
-    
-    if (nameEl) {
-        const userData = JSON.parse(localStorage.getItem('currentUser')) || {
-            name: "Shcherbatiuk Yevhen",
-            email: "shcherbatiuk.yevhen@kpi.ua",
-            gender: "Male",
-            dob: "2000-01-12"
-        };
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-        nameEl.innerText = userData.name;
-        document.getElementById('profile-email').innerText = userData.email;
-        document.getElementById('profile-gender').innerText = userData.gender;
-        document.getElementById('profile-dob').innerText = userData.dob;
+    if (currentUser && nameEl) {
+        nameEl.innerText = currentUser.name;
+        document.getElementById('profile-email').innerText = currentUser.email;
+        document.getElementById('profile-gender').innerText = currentUser.gender;
+        document.getElementById('profile-dob').innerText = currentUser.dob;
+    } else if (nameEl) {
+        window.location.href = 'login.html';
     }
 };
 
-profileInit();
-
-const logoutBtn = document.getElementById('logout-btn');
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-    });
+if (document.getElementById('profile-name')) {
+    profileInit();
 }
 
-const registrationForm = document.getElementById('registration-form');
+document.getElementById('logout-btn')?.addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
+});
 
-registrationForm?.addEventListener('submit', (event) => {
-    if (!registrationForm.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation();
-    } else {
-        event.preventDefault();
-
+const regForm = document.getElementById('registration-form');
+regForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (regForm.checkValidity()) {
         const userData = {
             name: document.getElementById('reg-name').value,
             email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-password').value,
             gender: document.getElementById('reg-gender').value,
             dob: document.getElementById('reg-dob').value
         };
-        
-        localStorage.setItem('userProfile', JSON.stringify(userData));
-        alert('Registration successful!');
+        localStorage.setItem('registeredUser', JSON.stringify(userData));
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        alert('Реєстрація успішна!');
         window.location.href = 'profile.html';
     }
+    regForm.classList.add('was-validated');
+});
 
-    registrationForm.classList.add('was-validated');
-}, false);
+const loginForm = document.getElementById('login-form');
+loginForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-password').value;
+    const saved = JSON.parse(localStorage.getItem('registeredUser'));
+
+    if (saved && saved.email === email && saved.password === pass) {
+        localStorage.setItem('currentUser', JSON.stringify(saved));
+        window.location.href = 'profile.html';
+    } else {
+        alert('Incorrect email or password!');
+    }
+});

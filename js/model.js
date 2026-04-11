@@ -1,17 +1,7 @@
 export default class ContactModel {
     constructor() {
-        const defaultContacts = [
-            { id: 1, name: "Steve Jobs", phone: "+380671112233" },
-            { id: 2, name: "Mark Zuckerberg", phone: "+380504445566" },
-            { id: 3, name: "Linus Torvalds", phone: "+380937778899" },
-            { id: 4, name: "Satya Nadella", phone: "+380440001122" },
-            { id: 5, name: "Tim Cook", phone: "+380683334455" }
-        ];
-
-        const saved = localStorage.getItem('contacts');
-        this.contacts = saved ? JSON.parse(saved) : defaultContacts;
-        
-        if (!saved) this._save();
+        const savedContacts = JSON.parse(localStorage.getItem('contacts'));
+        this.contacts = savedContacts || [];
     }
 
     _save() {

@@ -1,9 +1,10 @@
 export default class ContactView {
     constructor() {
         this.contactList = document.getElementById('contact-list');
-        this.addBtn = document.getElementById('add-contact-btn');
-        this.modal = new bootstrap.Modal(document.getElementById('addContactModal'));
         this.form = document.getElementById('add-contact-form');
+        
+        const modalElement = document.getElementById('addContactModal');
+        this.modal = modalElement ? new window.bootstrap.Modal(modalElement) : null;
     }
 
     stringToColor(str) {
@@ -20,10 +21,11 @@ export default class ContactView {
         if (nameParts.length > 1) {
             return (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase();
         }
-        return nameParts[0][0].toUpperCase();
+        return (nameParts[0][0] || '?').toUpperCase();
     }
 
     renderContacts(groupedContacts) {
+        if (!this.contactList) return;
         this.contactList.innerHTML = '';
 
         for (const [letter, contacts] of Object.entries(groupedContacts)) {
@@ -46,9 +48,9 @@ export default class ContactView {
                     </td>
                     <td><strong>${contact.name}</strong></td>
                     <td class="text-muted">${contact.phone}</td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${contact.id}">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger del-btn ms-1" data-id="${contact.id}">Delete</button>
+                    <td class="text-end" data-id="${contact.id}">
+                        <button class="btn btn-sm btn-outline-primary edit-btn">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger del-btn ms-1">Delete</button>
                     </td>
                 `;
                 this.contactList.appendChild(row);
@@ -57,24 +59,36 @@ export default class ContactView {
     }
 
     fillForm(contact) {
-        const idField = document.getElementById('modal-id');
-        if (idField) idField.value = contact.id; 
-
+        document.getElementById('modal-id').value = contact.id; 
         document.getElementById('modal-name').value = contact.name;
         document.getElementById('modal-phone').value = contact.phone;
         
         document.querySelector('.modal-title').textContent = 'Edit Contact';
-        this.modal.show();
+        this.modal?.show();
     }
 
     bindAddContact(handler) {
-        this.addBtn?.addEventListener('click', () => {
-            this.form.reset();
-            document.getElementById('modal-id').value = '';
-            document.querySelector('.modal-title').textContent = 'New Contact';
-            this.form.classList.remove('was-validated');
-            this.modal.show();
-        });
+        const addBtn = document.getElementById('add-contact-btn');
+        
+        if (addBtn) {
+            addBtn.onclick = (e) => {
+
+                const isLogged = localStorage.getItem('currentUser');
+                if (!isLogged) {
+                    if (confirm("Only authorized users can add contacts. Go to login?")) {
+                        window.location.href = 'login.html';
+                    }
+                    return;
+                }
+
+                this.form.reset();
+                document.getElementById('modal-id').value = '';
+                document.querySelector('.modal-title').textContent = 'New Contact';
+                this.form.classList.remove('was-validated');
+
+                this.modal?.show();
+            };
+        }
 
         this.form?.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -90,32 +104,27 @@ export default class ContactView {
             const phone = document.getElementById('modal-phone').value;
 
             handler(name, phone, id); 
-            
-            this.modal.hide();
+            this.modal?.hide();
         });
     }
 
     bindDeleteContact(handler) {
-        this.contactList.addEventListener('click', event => {
-            const deleteBtn = event.target.closest('.del-btn');
-            if (deleteBtn) {
-                const id = parseInt(deleteBtn.dataset.id);
-                const row = deleteBtn.closest('tr');
-                
-                row.classList.add('fade-out');
-                
-                setTimeout(() => {
+        this.contactList?.addEventListener('click', e => {
+            const btn = e.target.closest('.del-btn');
+            if (btn) {
+                const id = btn.parentElement.dataset.id;
+                if (confirm('Delete this contact?')) {
                     handler(id);
-                }, 400);
+                }
             }
         });
     }
 
     bindEditContact(handler) {
-        this.contactList.addEventListener('click', event => {
-            const editBtn = event.target.closest('.edit-btn');
-            if (editBtn) {
-                const id = parseInt(editBtn.dataset.id);
+        this.contactList?.addEventListener('click', e => {
+            const btn = e.target.closest('.edit-btn');
+            if (btn) {
+                const id = btn.parentElement.dataset.id;
                 handler(id); 
             }
         });

@@ -80,7 +80,7 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
                                 <input type="text" id="modal-name" class="form-control" 
-                                    placeholder="John Doe" required minlength="3">
+                                    placeholder="John Doe" required minlength="3" autocomplete="off">
                                 <div class="invalid-feedback">Please enter full name (minimum 3 symbols).</div>
                             </div>
                         </div>
@@ -90,7 +90,8 @@
                                 <span class="input-group-text bg-light"><i class="bi bi-phone"></i></span>
                                 <input type="tel" id="modal-phone" class="form-control" 
                                     placeholder="+380..." required 
-                                    pattern="^\+?[0-9]{10,13}$"> <div class="invalid-feedback">Enter valid number (exmpl. +380123456789).</div>
+                                    pattern="^\+?[0-9]{10,13}$" autocomplete="off"> 
+                                <div class="invalid-feedback">Enter valid number (exmpl. +380123456789).</div>
                             </div>
                         </div>
                         <div class="d-grid mt-4">

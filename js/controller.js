@@ -1,35 +1,58 @@
 export default class ContactController {
-    constructor(model, view) {
-        this.model = model;
-        this.view = view;
+constructor(model, view) {
+    this.model = model;
+    this.view = view;
 
-        this.onContactListChanged(this.model.getGroupedContacts());
+    this.view.bindAddContact(this.handleAddContact);
+    this.view.bindDeleteContact(this.handleDeleteContact);
+    this.view.bindEditContact(this.handleEditContact);
 
-        this.view.bindAddContact(this.handleAddContact.bind(this));
-        this.view.bindDeleteContact(this.handleDeleteContact);
-        this.view.bindEditContact(this.handleEdit.bind(this));
+    if (!localStorage.getItem('currentUser')) {
+        this.view.renderContacts({});
+    } else {
+        this.onContactsChanged(this.model.contacts);
     }
+}
 
-    onContactListChanged = (contacts) => {
-        this.view.renderContacts(contacts);
-    }
-
-    handleAddContact(name, phone, id = null) {
-        this.model.addContact(name, phone, id);
-        const grouped = this.model.getGroupedContacts();
+    onContactsChanged = (contacts) => {
+        const grouped = this.groupByLetter(contacts);
         this.view.renderContacts(grouped);
-    }
+    };
+
+    handleAddContact = (name, phone, id) => {
+        if (!name || !phone) return;
+
+        if (id) {
+            this.model.updateContact(id, name, phone);
+        } else {
+            this.model.addContact(name, phone);
+        }
+
+        this.onContactsChanged(this.model.contacts);
+    };
 
     handleDeleteContact = (id) => {
         this.model.deleteContact(id);
-        this.onContactListChanged(this.model.getGroupedContacts());
-    }
+        this.onContactsChanged(this.model.contacts);
+    };
 
-    handleEdit(id) {
-        const contact = this.model.contacts.find(c => c.id === id);
+    handleEditContact = (id) => {
+        const contact = this.model.contacts.find(c => c.id == id);
         if (contact) {
             this.view.fillForm(contact);
-            this.editingId = id; 
         }
+    };
+
+    groupByLetter(contacts) {
+        return contacts.reduce((acc, contact) => {
+            const letter = contact.name?.[0]?.toUpperCase() || '#';
+
+            if (!acc[letter]) {
+                acc[letter] = [];
+            }
+
+            acc[letter].push(contact);
+            return acc;
+        }, {});
     }
 }
